@@ -69,6 +69,7 @@ DIV   - divides all numbers from in-stacks and pushes them to out-stacks. When c
 ##### Stack manipulation:
 
 SWAP  - Can only be called by a single in-stack. It copies two values from in-stack, swaps them and pushes them to out-stacks.
+
 COMP  - Can only be called by a single in-stack. It copies two values from in-stack, and if they are same pushes 1 to out-stacks, else it pushes FALSE.
 
 ##### Miscellanous:
