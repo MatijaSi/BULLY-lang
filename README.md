@@ -96,3 +96,10 @@ Numbers - anything chicken scheme interprets as a number, all numbers are true (
 FALSE 	- boolean false
 
 Stacks	- Fundamental data type. These are last-in first-out stacks. This basically means that the first value pushed to stack will be the last one read. Pushing means adding a new value to stack, while popping means removingit. These commands are a little different in BULLY (check PUSH and POP above) since all commands can read from stacks and write to them.
+
+#### Default Stacks
+
+d - default stack, only stack not initialized by user.
+
+i - isn't a stack. If i is specified as in-stack, command will read values from its left (for example, PUSH here reads 1 2 3: 1 2 3 i > PUSH > d). If no in-stack is specified, i is used.
+o - isn't a stack. If o is specified as out-stack, values sent to it will be displayed to the user. If no out-stack is specified, o is used. There is no PRINT or DISPLAY command, PUSH values to out-stack instead.
