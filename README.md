@@ -102,6 +102,6 @@ Stacks	- Fundamental data type. These are last-in first-out stacks. This basical
 
 d - default stack, only stack not initialized by user.
 
-i - isn't a stack. If i is specified as in-stack, command will read values from its left (for example, PUSH here reads 1 2 3: 1 2 3 i > PUSH > d). If no in-stack is specified, i is used.
+i - If i is specified as in-stack, command will read values from its left (for example, PUSH here reads 1 2 3: 1 2 3 i > PUSH > d). If no in-stack is specified, i is used.
 
-o - isn't a stack. If o is specified as out-stack, values sent to it will be displayed to the user. If no out-stack is specified, o is used. There is no PRINT or DISPLAY command, PUSH values to out-stack instead.
+o - If o is specified as out-stack, values sent to it will be displayed to the user. If no out-stack is specified, o is used. There is no PRINT or DISPLAY command, PUSH values to out-stack instead.
