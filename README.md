@@ -1,7 +1,7 @@
 # BULLY-lang
 Bully is Ugly Little Language Yerk.
 
-## NOTE: Interpreter wasn't writen yet, so for now enjoy this README.
+## NOTE: Interpreter still has some bugs and is unfinished... But should mostly work.
 
 ### Compilation
 
@@ -9,99 +9,96 @@ You need to have Chicken Scheme installed.
 Under linux run in code directory:
 
 ```
-make bully 
+csc -o interpreter interpreter.scm
 ```
+
+And then
+
+```
+./interpreter
+```
+
+to start BULLY interpreter.
 
 ### Usage
 
 #### What is BULLY?
 
-BULLY is a multi-stack based language. It's different from FORTH in that you can make new stack and all instructions can read/write from/to one or more stacks.
+BULLY is a stack oriented language with explicit stack manipulation
 
-"BULLY:> " is default interpreter prompt.
+#### Tutorial
 
-#### Syntax
-
-General form:
+Syntax:
 
 ```
-[in-stack-1 in-stack-2 ... in-stack-n > command > out-stack-1 ... out-stack-n]
+in-stack: values-to-be-writen-to-in-stack out-stack command .
+```
 
 Example:
-[s1 s2 > PUSH > s3 s4]
 
 ```
-
-Commands read values from in-stacks and write to out-stacks.
-
-If there is only one in-stack and only one out-stack you can omit "[]":
-
-```
-in-stack > command > out-stack
-
-Example:
-d > PUSH > o
+d: 1 2 3 o PUSH .
 ```
 
-If no in-stack is specified command reads from i (input), so it reads values to it's left. If no out-stack is specified, values are writen to o (output) and displayed.
+All values between "in-stack:" and "." are pushed to in-stack. "." executes last item of stack, in this case, command PUSH, which works on values of in-stack. Last value between command is regarded by most commands as out-stacks, where results are pushed.
+
+Three stacks are predefined: "i" "o" and "d". "o" stack is for output and will be displayed to user and emptied after evaluation.
+
+You can use multiple commands at a time:
 
 ```
-value-1 value-2 ... value-3 command
-
-Examples:
-1 2 PUSH
-1 2 PUSH > d
-d > PUSH
+d: 1 2 3 o PUSH . 1 2 o POP .
 ```
+
+"o" stack will be displayed after last command is executed. All commands work on same in-stack.
+
+O is false, all other values are true. This mostly only matters when using IF command.
 
 #### Commands
 
 ##### Numeric:
 
-ADD   - adds all numbers from in-stacks and pushes them to out-stacks.
+ADD   - adds all numbers from in-stack and pushes result to out-stack.
 
-SUB   - substracts all numbers from in-stacks and pushes them to out-stacks. When called with only one value it negates it.
+SUB   - substracts all numbers from in-stack and pushes result to out-stack. When called with only one value it negates it.
 
-MUL   - multiplies all numbers from in-stacks and pushes them to out-stacks.
+MUL   - multiplies all numbers from in-stack and pushes result to out-stack.
 
-DIV   - divides all numbers from in-stacks and pushes them to out-stacks. When called with only one value it returns it's reciprocal.
+DIV   - divides all numbers from in-stack and pushes result to out-stack. When called with only one value it returns it's reciprocal.
+
+Numeric commands pop item from in-stack, so it's empty after usage. Of course you can push result back to in-stack.
+
+Example (displays 9):
+
+```
+d: 1 2 d ADD . 3 o MUL .
+```
 
 ##### Stack manipulation:
 
-SWAP  - Can only be called by a single in-stack. It copies two values from in-stack, swaps them and pushes them to out-stacks.
+SWAP  - It pops two values from in-stack, swaps them and pushes them to out-stack.
 
-COMP  - Can only be called by a single in-stack. It copies two values from in-stack, and if they are same pushes 1 to out-stacks, else it pushes FALSE.
+COMP  - It pops two values from in-stack, and if they are same pushes 1 to out-stack, else it pushes 0.
+
+DUP   - It pops a value from in-stack adn pushes it twice to out-stack.
 
 ##### Miscellanous:
 
-PUSH  - copies values from in-stacks and pushes them to out-stacks.
+PUSH  - copies values from in-stack and pushes them to out-stack.
 
-POP   - removes values from in-stacks and pushes them to out-stacks.
+POP   - pops values from in-stack and pushes them to out-stack.
 
-STACK - makes new stacks with values from in-stacks and named as specified in out-stacks. Values are pushed to new stacks from in-stacks in order from left to right.
+@     - makes new stacks named after values it pops from in-stack. For now only single character names are allowed (s, m, n, but not s1, s2, s3 (this is a bug and will soon be fixed)).
 
-IF    - reads three values from single in-stack. If first is true, second is pushed to out-stacks, otherwise third is pushed.
+IF    - reads three values from in-stack. If first is true, second is pushed to out-stacks, otherwise third is pushed.
 
-DELAY - reads values from in-stacks and associates them with out-stacks.
+DELAY - needs even number of arguments from in-stack. First argument of a pair should be value, second stack it targets. DELAYed values can be FORCE pushed to targeted stacks.
 
-FORCE - pushes delayed values to their associated out-stacks. Both in-stacks and out-stacks are used to determine which values to force. For example, [s1 s2 > FORCE > d o] will force values associated with s1, s2, d, o.
+FORCE - pushes all delayed values to their associated out-stacks.
 
-All commands copy values from in-stacks (except POP). If you want to pop these
-values instead, use command-name! (example: DIV!). There is no PUSH!, since
-PUSH! is POP. Also there is no FORCE!.
+Example (1 and 2 are displayed, 3 is pushed to i stack):
 
-#### Data Types
-
-Numbers - anything chicken scheme interprets as a number, all numbers are true (not FALSE).
-
-FALSE 	- boolean false
-
-Stacks	- Fundamental data type. These are last-in first-out stacks. This basically means that the first value pushed to stack will be the last one read. Pushing means adding a new value to stack, while popping means removing it. These commands are a little different in BULLY (check PUSH and POP above) since all commands can read from stacks and write to them.
-
-#### Default Stacks
-
-d - default stack, only stack not initialized by user.
-
-i - If i is specified as in-stack, command will read values from its left (for example, PUSH here reads 1 2 3: 1 2 3 i > PUSH > d). If no in-stack is specified, i is used.
-
-o - If o is specified as out-stack, values sent to it will be displayed to the user. If no out-stack is specified, o is used. There is no PRINT or DISPLAY command, PUSH values to out-stack instead.
+```
+d: 1 o 2 o 3 i DELAY .
+i: FORCE .
+```
