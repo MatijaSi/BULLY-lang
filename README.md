@@ -3,7 +3,13 @@ Bully is Ugly Little Language Yerk.
 
 ## NOTE: Interpreter still has some bugs and is unfinished... But should mostly work.
 
-### Compilation
+### Known bugs:
+
+You can't use stacks with names longer than one character ("s" is fine "s1" isn't).
+
+You can't use "." by itself (example: "d: .")
+
+### Installation
 
 You need to have Chicken Scheme installed.
 Under linux run in code directory:
