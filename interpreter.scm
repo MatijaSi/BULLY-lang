@@ -65,6 +65,12 @@
   (lambda (stck)
     (stack->list (alist-ref stck STACK-LUP equal?))))
 
+(define copy-from-stack! ; copy all elements from stack and empty it
+  (lambda (stck)
+    (let ((out (copy-from-stack stck)))
+      (empty-stack stck)
+      out)))
+
 (define write-to-stack ; push multiple values to stack
   (lambda (stck values)
     (if (null? values)
@@ -84,9 +90,10 @@
   (lambda (key op)
     (COMMAND-add key
 		 (lambda (in-stack)
-		   (let ((out-stack (STACK-pop in-stack)))
-		     (STACK-push (apply op (copy-from-stack in-stack)) out-stack)
-		     (empty-stack in-stack))))))
+		   (let* ((out-stack (STACK-pop in-stack))
+			 (lst (copy-from-stack in-stack)))
+		     (empty-stack in-stack)
+		     (STACK-push (apply op lst) out-stack))))))
 
 (construct-numeric-command "ADD" +)
 (construct-numeric-command "SUB" -)
@@ -199,7 +206,8 @@
 
 (COMMAND-add "DELAY"
 	     (lambda (in-stack)
-	       (DELAY-add-many (copy-from-stack in-stack))))
+	       (DELAY-add-many (copy-from-stack in-stack))
+	       (empty-stack in-stack)))
 
 (define force-all
   (lambda ()
@@ -228,14 +236,16 @@
 
 (define evaluate
   (lambda (lines)
-    (if (null? lines)
-	1
-	(begin
-	  (read-to-in-stack (car lines))
-	  (exec *current-in-stack*)
-	  (evaluate (cdr lines))))))
+    (cond ((null? lines) 1)
+	 ; ((or (equal? "" lines) (equal? " " lines))
+	  ;   (exec *current-in-stack*))
+	  (#t
+	   (begin
+	     (read-to-in-stack (car lines))
+	     (exec *current-in-stack*)
+	     (evaluate (cdr lines)))))))
    
-(define repl
+(define b-repl
   (lambda ()
     (prompt)
     (set! *current-in-stack* (read-in-stack (read-char) '()))
@@ -243,4 +253,4 @@
     (O-STACK-display)
     (repl)))
 
-(repl)
+(b-repl)
