@@ -9,7 +9,13 @@ You can't use stacks with names longer than one character ("s" is fine "s1" isn'
 
 You can't use "." by itself (example: "d: .")
 
-When out-stack is same as the in-stack weird stuff happens (since during popping instructions in-stack is emptied after instruction is performed, so output is deleted as well).
+### Code example
+
+Calculate and display result of: (2 + 3) * (4 + 5)
+
+```
+d: 2 3 d ADD . d DELAY . 4 5 d ADD . FORCE . o MUL .
+```
 
 ### Installation
 
