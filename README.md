@@ -5,8 +5,6 @@ Bully is Ugly Little Language Yerk.
 
 ### Known bugs:
 
-You can't use stacks with names longer than one character ("s" is fine "s1" isn't).
-
 You can't use "." by itself (example: "d: .")
 
 ### Code example
