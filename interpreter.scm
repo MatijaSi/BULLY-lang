@@ -111,11 +111,24 @@
   (lambda ()
     (display "BULLY:> ")))
 
+(define read-word
+  (lambda (lst)
+    (let ((chr (read-char)))
+      (if (equal? chr #\:)
+	  (list->string lst)
+	  (read-word (cons chr lst))))))
+
+(define end-stack-name?
+  (lambda (chr)
+    (if (equal? #\: chr)
+	#f
+	#t)))
+
 (define read-in-stack
-  (lambda (char list)
-    (if (equal? char #\:)
-	(list->string list)
-	(read-in-stack (read-char) (cons char list)))))
+  (lambda ()
+    (let ((stack-name (read-token end-stack-name?)))
+      (read-char)
+      stack-name)))
 
 (define clean
   (lambda (str)
@@ -245,12 +258,13 @@
 	     (exec *current-in-stack*)
 	     (evaluate (cdr lines)))))))
    
-(define b-repl
+(define repl
   (lambda ()
-    (prompt)
-    (set! *current-in-stack* (read-in-stack (read-char) '()))
-    (evaluate (linefy (read-line)))
-    (O-STACK-display)
-    (repl)))
+    (begin
+      (prompt)
+      (set! *current-in-stack* (read-in-stack))
+      (evaluate (linefy (read-line)))
+      (O-STACK-display)
+      (repl))))
 
-(b-repl)
+(repl)
