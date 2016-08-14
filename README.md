@@ -100,7 +100,7 @@ PUSH  - copies values from in-stack and pushes them to out-stack.
 
 POP   - pops values from in-stack and pushes them to out-stack.
 
-@     - makes new stacks named after values it pops from in-stack. For now only single character names are allowed (s, m, n, but not s1, s2, s3 (this is a bug and will soon be fixed)).
+@     - makes new stacks named after values it pops from in-stack. Multi-character stack names are now allowed (for example s1, stack1, stack-1 ...)
 
 IF    - reads three values from in-stack. If first is true, second is pushed to out-stacks, otherwise third is pushed.
 
